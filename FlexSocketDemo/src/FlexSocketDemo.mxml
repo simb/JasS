@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" creationComplete="init()">
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			protected var socket:Socket;
+			
+			protected function init():void{
+				socket = new Socket('localhost',8080);
+				socket.addEventListener(ProgressEvent.SOCKET_DATA, onData);
+			}
+			
+			protected function onData(event:Event):void{
+				var str:String = socket.readUTFBytes(socket.bytesAvailable);
+				log.text += str;
+			}
+			
+			
+			protected function write(str:String):void {
+				str += "\n";
+				try {
+					socket.writeUTFBytes(str);
+				}
+				catch(e:IOError) {
+					trace(e);
+				}
+			}
+			protected function sendMessage():void{
+				write(msg.text);
+				msg.text = "";
+			}
+		]]>
+	</fx:Script>
+	<s:TextInput id="msg" enter="sendMessage()" width="100%" />
+	<s:TextArea width="100%" height="100%" id="log" />
+</s:Application>
