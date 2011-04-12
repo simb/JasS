@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Metadata>
+		[Event(name="join", type="flash.events.Event")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import mx.validators.Validator;
+			protected function join_clickHandler(event:MouseEvent):void
+			{
+				var errors:Array = Validator.validateAll(validators);
+				
+				if ( errors.length == 0 ) {
+					var e:Event = new Event("join",true);
+					dispatchEvent(e);
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Array id="validators">
+			<mx:StringValidator source="{username}" property="text" />
+		</fx:Array>
+	</fx:Declarations>
+	
+	<s:Form>
+		<s:FormItem label="UserName:">
+			<s:TextInput id="username" />
+		</s:FormItem>
+		<s:FormItem>
+			<s:Button label="Join" id="join" click="join_clickHandler(event)" />
+		</s:FormItem>
+	</s:Form>
+</s:NavigatorContent>

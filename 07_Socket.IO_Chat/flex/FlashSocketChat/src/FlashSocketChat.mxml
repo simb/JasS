@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   minWidth="955" minHeight="600" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:views="views.*"
+			   creationComplete="creationCompleteHandler(event)">
+	<s:states>
+		<s:State name="base" />
+		<s:State name="status" />
+	</s:states>
+	<fx:Script>
+		<![CDATA[
+			import com.pnwrain.flashsocket.FlashSocket;
+			import com.pnwrain.flashsocket.events.FlashSocketEvent;
+			
+			import events.ChatEvent;
+			
+			import mx.events.FlexEvent;
+			
+			[Bindable]
+			protected var socket:FlashSocket;
+			
+			protected function joinHandler(event:Event):void
+			{
+				socket.send("USERNAME:" + loginForm.username.text);			
+				
+			}
+			
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				socket = new FlashSocket("ws://localhost:9202/socket.io/flashsocket");
+				socket.addEventListener(FlashSocketEvent.CONNECT, onConnect);
+				socket.addEventListener(FlashSocketEvent.MESSAGE, onMessage);
+				
+				setStatus("Connecting to server.");
+			}
+			
+			protected function onConnect(event:FlashSocketEvent):void {
+				clearStatus();
+			}
+			
+			protected function setStatus(msg:String):void{
+				this.currentState = "status";
+				status.text = msg;
+				
+			}
+			protected function clearStatus():void{
+				status.text = "";
+				this.currentState = "";
+			}
+			
+			protected function onMessage(event:FlashSocketEvent):void{
+				//var data:* = unescape(event.data);
+				//watch for announcement or users
+				if ( event.data["announcement"] != undefined ){
+					if ( event.data.announcement.toString().search("Connected") >= 0 ){
+						vs.selectedIndex = 1;
+					}
+				}
+				chatForm.onMessage(event.data);
+			}
+			
+			protected function chatForm_sendHandler(event:ChatEvent):void
+			{
+				socket.send( event.data.toString() );
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<mx:ViewStack id="vs" width="100%" height="100%">
+		<views:LoginForm id="loginForm" width="100%" height="100%" join="joinHandler(event)" />
+		<views:ChatPod id="chatForm" width="100%" height="100%" send="chatForm_sendHandler(event)" />
+	</mx:ViewStack>
+	
+	<s:Group width="100%" height="100%" includeIn="status">
+		<s:BorderContainer borderColor="black" borderWeight="2" horizontalCenter="0" verticalCenter="0">
+			<s:Label id="status" paddingBottom="20" paddingRight="20" paddingTop="20" paddingLeft="20" />
+		</s:BorderContainer>
+	</s:Group>
+	
+</s:Application>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx">
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	<fx:Metadata>
+		[Event(name="send", type="events.ChatEvent")]
+	</fx:Metadata>
+	<fx:Declarations>
+		<s:ArrayCollection id="logs" />
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import events.ChatEvent;
+		
+			
+			protected function send_clickHandler(event:MouseEvent):void
+			{
+				var e:ChatEvent = new ChatEvent(ChatEvent.SEND);
+				e.data = msg.text;
+				dispatchEvent(e);
+				logs.addItem(msg.text);
+				msg.text = "";
+				
+				
+			}
+			
+			public function onMessage(msg:Object):void{
+				if ( msg["messages"] != undefined ){
+					var messages:Array = msg.messages;
+					for ( var i:int=0; i < messages.length; i++ ){
+						logs.addItem(messages[i].username + ": " + messages[i].message);
+					}
+				}
+				if ( msg["message"] != undefined ){
+					logs.addItem(msg.username + ": " + msg.message);
+				}
+				
+			}
+		]]>
+	</fx:Script>
+	<s:HGroup width="100%">
+		<s:Form defaultButton="{send}" width="100%">
+			<s:FormItem>
+				<s:layout>
+					<s:HorizontalLayout />
+				</s:layout>
+				
+				<s:TextInput id="msg" width="100%" />
+				<s:Button label="Send" id="send" click="send_clickHandler(event)" />
+			</s:FormItem>
+		</s:Form>
+	</s:HGroup>
+	<s:List id="chat" dataProvider="{logs}" width="100%" height="100%">
+		
+	</s:List>
+</s:NavigatorContent>
