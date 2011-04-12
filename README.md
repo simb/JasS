@@ -26,7 +26,7 @@ This the basic node socket example.  when running this example you can telnet to
 Building on 05, we adapt the server to allow for a chat client. When a client connects we push that into an array. After adding an event listener for 'data' when we receive a message message we loop through the clients and send them the message prepended with the client number who sent it.  This works by telnetting to localhost:8080 and also by using the FlexSocketDemo code.
 
 ##07\_Socket.IO\_Chat
-
-
+I found this [simple html chat](https://github.com/arunjitsingh/socket-chat) demo using socket.io and so I decided to write a flash client to connect to it. I changed the original to use a newer socket.io library that handled json correctly, and then allowed flashsockets to connect.
 
 ##08 _Bonus_ Socket.IO - Real Time Stats
+This was the final demo. This was what all the build up was for. Showing HTML and Flash working together in context. Check out [NodePoll](https://github.com/simb/nodepoll)
